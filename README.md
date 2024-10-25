@@ -1,6 +1,3 @@
-Here's a comprehensive `README.md` file for your expense tracker application:
-
-```markdown
 # Expense Tracker
 
 ## Overview
