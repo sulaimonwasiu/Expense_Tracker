@@ -13,6 +13,7 @@ class ExpenseTracker(cmd.Cmd):
         super().__init__()
         self.storage = Storage()  # Use the Storage class
         self.expenses = self.storage.load_expenses()
+        self.budgets = self.storage.load_budgets()
     
     def arg_parser(self, args):
         """Parse command line arguments using argparse and return them as a dictionary."""
@@ -28,6 +29,20 @@ class ExpenseTracker(cmd.Cmd):
         
         # Convert Namespace to dictionary
         return vars(args)
+    
+    def do_set_budget(self, args):
+        """Set a monthly budget. Usage: set_budget --month <month_number> --amount <amount>."""
+        data = self.arg_parser(shlex.split(args))
+        month = data.get('month')
+        amount = data.get('amount')
+
+        if month is None or amount is None or not (1 <= month <= 12):
+            print("Error: Please provide a valid month (1-12) and amount.")
+            return
+        
+        self.budgets[str(month)] = amount
+        self.storage.save_budgets(self.budgets)
+        print(f'Set budget of ${amount} for month {month}.')
 
 
     def do_add(self, args):
@@ -45,6 +60,16 @@ class ExpenseTracker(cmd.Cmd):
         if not description or not amount or not category:
             print("Error: Description, amount, and category are required.")
             return
+        
+        # Check budget
+        month = datetime.datetime.now().month
+        budget = self.budgets.get(str(month), 0)
+        total_monthly_expenses = sum(exp['amount'] for exp in self.expenses if 
+                                      datetime.datetime.fromisoformat(exp['created_at']).month == month)
+        
+        if total_monthly_expenses + amount > budget:
+            print(f"Warning: Adding this expense will exceed your budget of ${budget} for this month.")
+
 
         expense = {
             'id': len(self.expenses) + 1,
@@ -136,14 +161,21 @@ class ExpenseTracker(cmd.Cmd):
 
     def do_summary(self, args):
         """View a summary of expenses for a specific month of the current year. 
-        Usage: monthly_summary --month <month_number>.
+        Usage: summary [--month <month_number>].
         """
-        #data = self.parse_command_line(args.replace('"', '').strip().split())
-        data = self.arg_parser(shlex.split(args))
-        if all(value is None for value in data.values()):
-            total_expenses = sum(exp['amount'] for exp in self.expenses)
-            print(f'Total Expenses: ${total_expenses}')
-            return
+        data = {
+            'month': None
+        }
+
+        try:
+            data = self.arg_parser(shlex.split(args))
+            if all(value is None for value in data.values()):
+                total_expenses = sum(exp['amount'] for exp in self.expenses)
+                print(f'Total Expenses: ${total_expenses}')
+                return
+        except SystemExit:
+            #print("Error: Invalid input. Please ensure you provide a valid month as integer.")
+            pass
 
         month = data.get('month')
 
@@ -181,7 +213,7 @@ class ExpenseTracker(cmd.Cmd):
         if monthly_expenses:
             print(f'Total expenses for {month_name}: ${total_monthly_expenses}')
         else:
-            print(f'No expenses found for month {month_name}/{current_year}.')
+            print(f'No expenses found for {month_name}, {current_year}.')
 
     def do_export(self, args):
         """Export expenses to a CSV file. Usage: export <filename>."""

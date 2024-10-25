@@ -6,5 +6,21 @@
         "category": "Insurance",
         "created_at": "2024-10-25T07:30:02.159635",
         "updated_at": "2024-10-25T07:30:02.159635"
+    },
+    {
+        "id": 2,
+        "description": "Parking fees",
+        "amount": 30,
+        "category": "Transportation",
+        "created_at": "2024-10-25T10:39:08.317501",
+        "updated_at": "2024-10-25T10:39:08.317501"
+    },
+    {
+        "id": 3,
+        "description": "Health insurance",
+        "amount": 20,
+        "category": "Insurance",
+        "created_at": "2024-10-25T13:10:22.164333",
+        "updated_at": "2024-10-25T13:10:22.164333"
     }
 ]
