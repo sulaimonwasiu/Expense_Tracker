@@ -139,9 +139,9 @@ The application stores expenses in a JSON format file (`finance.json`) and budge
 
 Contributions are welcome! If you have suggestions or want to report issues, feel free to open an issue or a pull request on GitHub.
 
-## License
+## Project URL
 
-This project is licensed under the MIT License.
+[Project link](https://roadmap.sh/projects/expense-tracker)
 
 ## Contact
 
