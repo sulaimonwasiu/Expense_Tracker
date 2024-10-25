@@ -26,20 +26,22 @@ The **Expense Tracker** is a command-line application designed to help users man
   - `argparse`
   - `csv`
   - `datetime`
+  - `json`
+  - `os`
 
 ## Installation
 
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/yourusername/expense-tracker.git
+   git clone https://github.com/sulaimonwasiu/expense-tracker.git
    cd expense-tracker
    ```
 
 2. Run the application:
 
    ```bash
-   python app.py
+   python expense_tracker.py
    ```
 
 ## Usage
@@ -49,49 +51,49 @@ The **Expense Tracker** is a command-line application designed to help users man
 - **Add an Expense**
   
   ```bash
-  add --description "Lunch" --amount 20 --category "Food"
+  expense-tracker add --description <description> --amount <amount>
   ```
 
 - **Update an Expense**
   
   ```bash
-  update --id 1 --description "Dinner" --amount 25
+  expense-tracker update --id <id> --description <description> --amount <amount>
   ```
 
 - **Delete an Expense**
   
   ```bash
-  delete --id 1
+  expense-tracker delete --id 1
   ```
 
 - **List Expenses**
   
   ```bash
-  list [--category <category>]
+  expense-tracker list [--category <category>]
   ```
 
 - **Set a Monthly Budget**
   
   ```bash
-  set_budget --month 10 --amount 500
+  expense-tracker set_budget --month 10 --amount 500
   ```
 
 - **View Monthly Summary**
   
   ```bash
-  summary --month 10
+  expense-tracker summary --month 10
   ```
 
 - **Export Expenses to CSV**
   
   ```bash
-  export expenses.csv
+  expense-tracker export expenses.csv
   ```
 
 - **Exit the Application**
   
   ```bash
-  exit
+  expense-tracker exit
   ```
 
 ### Example
@@ -99,37 +101,37 @@ The **Expense Tracker** is a command-line application designed to help users man
 1. Start the application:
 
    ```bash
-   python app.py
+   python expense_tracker.py
    ```
 
 2. Add a new expense:
 
    ```bash
-   expense-tracker> add --description "Grocery Shopping" --amount 150 --category "Groceries"
+   expense-tracker add --description "Grocery Shopping" --amount 150 --category "Groceries"
    ```
 
 3. View all expenses:
 
    ```bash
-   expense-tracker> list
+   expense-tracker list
    ```
 
 4. Set a budget for October:
 
    ```bash
-   expense-tracker> set_budget --month 10 --amount 600
+   expense-tracker set_budget --month 10 --amount 600
    ```
 
 5. Check the summary for October:
 
    ```bash
-   expense-tracker> summary --month 10
+   expense-tracker summary --month 10
    ```
 
 6. Export expenses to a CSV file:
 
    ```bash
-   expense-tracker> export expenses.csv
+   expense-tracker export expenses.csv
    ```
 
 ## Data Storage
@@ -146,7 +148,7 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-For any inquiries, please contact [your_email@example.com].
+For any inquiries, please contact [sulaimonwasiu13@gmail.com].
 ```
 
 ### Key Sections of the README
@@ -160,5 +162,3 @@ For any inquiries, please contact [your_email@example.com].
 7. **Contributing**: Information on how others can contribute to the project.
 8. **License**: Licensing information for the project.
 9. **Contact**: Contact information for further inquiries.
-
-This README provides a comprehensive guide to users and contributors, helping them understand and use your expense tracker effectively.

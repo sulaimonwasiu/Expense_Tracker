@@ -69,7 +69,7 @@ class ExpenseTracker(cmd.Cmd):
         
         if total_monthly_expenses + amount > budget:
             print(f"Warning: Adding this expense will exceed your budget of ${budget} for this month.")
-
+            return
 
         expense = {
             'id': len(self.expenses) + 1,
@@ -88,7 +88,12 @@ class ExpenseTracker(cmd.Cmd):
         try:
             #expense_id = self.parse_command_line(args.strip().split()).get('id')
             expense_id = self.arg_parser(shlex.split(args)).get('id')
-            self.expenses = [exp for exp in self.expenses if exp['id'] != expense_id]
+            ids = [exp['id'] for exp in self.expenses]
+            if expense_id in ids:
+                self.expenses = [exp for exp in self.expenses if exp['id'] != expense_id]
+            else:
+                print(f"Expsense with ID {expense_id} does not exist.")
+                return
             self.storage.save_expenses(self.expenses)
             print(f'# Expense with ID {expense_id} deleted successfully.')
         except ValueError:
