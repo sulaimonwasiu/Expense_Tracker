@@ -3,6 +3,7 @@ import cmd
 from storage import Storage
 import argparse
 import shlex
+import csv
 
 class ExpenseTracker(cmd.Cmd):
     intro = "Welcome. Type 'help' to list commands."
@@ -19,6 +20,7 @@ class ExpenseTracker(cmd.Cmd):
         parser.add_argument('--description', type=str, help='Description of the expense')
         parser.add_argument('--amount', type=int, help='Amount of the expense')
         parser.add_argument('--id', type=int, help='ID of the expense to update or delete')
+        parser.add_argument('--category', type=str, help='Category of the expense')
         parser.add_argument('--month', type=int, help='Month number to view summary (1-12)')
         
         # Parse the command
@@ -38,21 +40,17 @@ class ExpenseTracker(cmd.Cmd):
         data = args.copy()
         description = data.get('description')
         amount = data.get('amount')
+        category = args.get('category')
 
-        if not description or not amount:
-            print("Error: Description and amount are required.")
-            return
-
-        try:
-            amount = amount
-        except ValueError:
-            print("Error: Amount must be a number.")
+        if not description or not amount or not category:
+            print("Error: Description, amount, and category are required.")
             return
 
         expense = {
             'id': len(self.expenses) + 1,
             'description': description,
             'amount': amount,
+            'category': category,
             'created_at': datetime.datetime.now().isoformat(),
             'updated_at': datetime.datetime.now().isoformat()
         }
@@ -105,15 +103,21 @@ class ExpenseTracker(cmd.Cmd):
         print(f'# Expense with ID {expense_id} updated successfully.')
 
     def do_list(self, args):
-        """View all expenses. Usage: list"""
+        """View all expenses. Usage: list [--category <category>]"""
+
+        category_filter = None
+        if args:
+            data = self.arg_parser(shlex.split(args))
+            category_filter = data.get('category')
+
         if not self.expenses:
             print("No expenses to display.")
             return
         
         # Print the header
-        print("-" * 45)
-        print(f"{'ID':<4} {'Date':<12} {'Description':<20} {'Amount':<7}")
-        print("-" * 45)  # Print a separator line
+        print("-" * 60)
+        print(f"{'ID':<4} {'Date':<12} {'Description':<20} {'Amount':<7} {'Category':<15}")
+        print("-" * 60)  # Print a separator line
         
         
         for exp in self.expenses:
@@ -121,9 +125,13 @@ class ExpenseTracker(cmd.Cmd):
             date_str = exp['created_at'][:10]  # Get the date part from the timestamp
             description = exp['description']
             amount = f"${exp['amount']}"
+            category = exp.get('category', 'Unknown')
+
+            if category_filter and category != category_filter:
+                continue
             
             # Print each expense in the desired format
-            print(f"{exp['id']:<4} {date_str:<12} {description:<20} {amount:<7}")
+            print(f"{exp['id']:<4} {date_str:<12} {description:<20} {amount:<7} {category:<15}")
 
 
     def do_summary(self, args):
@@ -174,6 +182,16 @@ class ExpenseTracker(cmd.Cmd):
             print(f'Total expenses for {month_name}: ${total_monthly_expenses}')
         else:
             print(f'No expenses found for month {month_name}/{current_year}.')
+
+    def do_export(self, args):
+        """Export expenses to a CSV file. Usage: export <filename>."""
+        filename = args.strip() or 'expenses.csv'
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['ID', 'Description', 'Amount', 'Category', 'Created At'])
+            for exp in self.expenses:
+                writer.writerow([exp['id'], exp['description'], exp['amount'], exp['category'], exp['created_at']])
+        print(f'Expenses exported to {filename} successfully.')
 
 
     def do_exit(self, arg):
